@@ -1,10 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import plusOrange from "/plusOrange.svg";
-
-export default function PizzaList(pizzas) {
-  const data = pizzas.pizzas.pizzas;
+import axios from "axios";
+export default function PizzaList() {
+  const [pizzas, setPizzas] = useState([]);
   const [doughType, setDoughType] = useState({});
   const [size, setSize] = useState({});
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/pizzas")
+      .then((response) => {
+        setPizzas(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Ошибка при GET запросе");
+      });
+  }, []);
 
   function onClickDough(pizzaId, index) {
     setDoughType((prev) => ({
@@ -26,7 +38,7 @@ export default function PizzaList(pizzas) {
         <h2 className="font-bold text-3xl">Все пиццы</h2>
       </div>
       <div className="grid grid-cols-4 gap-5">
-        {data.map((pizza) => (
+        {pizzas.map((pizza) => (
           <div
             key={pizza.id}
             className="flex flex-col justify-center items-center gap-3"
