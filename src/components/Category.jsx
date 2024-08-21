@@ -15,7 +15,6 @@ export default function Category() {
     setActive(index);
     console.log(index);
   }
-
   return (
     <ul className="flex items-center justify-between basis-1/2 gap-3">
       {categoryes.map((value, index) => (
