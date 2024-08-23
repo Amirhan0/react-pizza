@@ -1,10 +1,54 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 export default function Drawer() {
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
+  const dough = ["тонкое", "традиционное"];
+  const sizes = ["26см", "30см", "40см"];
+  const deleteCart = (drawer_id) => {
+    axios
+      .delete(`http://localhost:3001/drawer/${drawer_id}`)
+      .then(() => {
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => item.drawer_id !== drawer_id)
+        );
+      })
+      .catch((error) => {
+        console.log("Ошибка при удалении данных корзины", error);
+      });
+  };
+
+  const updateQuantity = (drawer_id, change) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.drawer_id === drawer_id
+          ? { ...item, quantity: Math.max(1, (item.quantity || 1) + change) }
+          : item
+      )
+    );
+  };
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/drawer")
+      .then((response) => {
+        const itemsQuantities = response.data.map((item) => ({
+          ...item,
+          quantity: 1,
+        }));
+        setCartItems(itemsQuantities);
+      })
+      .catch((error) => {
+        console.log("Ошибка при получении данных корзины", error);
+      });
+  }, []);
 
   const goToMainPage = () => {
     navigate("/");
   };
+
   return (
     <div className="max-w-screen-lg mx-auto mt-10 p-4 h-screen">
       <div className="flex items-center justify-between mt-16">
@@ -20,38 +64,70 @@ export default function Drawer() {
         </div>
       </div>
       <div className="mt-10">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <img src="/pizzas/5.svg" alt="Сырный цыпленок" className="w-28" />
-            <div>
-              <span className="font-bold text-2xl">Сырный цыпленок</span>
-              <p className="font-medium text-l text-gray-400">
-                Тонкое тесто, 26 см
-              </p>
+        {cartItems.length > 0 ? (
+          cartItems.map((item) => (
+            <div
+              key={item.drawer_id}
+              className="flex items-center justify-between mb-4"
+            >
+              <div className="flex items-center gap-2">
+                <img src={item.imageUrl} alt={item.name} className="w-28" />
+                <div>
+                  <span className="font-bold text-2xl">{item.name}</span>
+                  <p className="font-medium text-l text-gray-400">
+                    {dough[item.dough_types] || "Не указан"},{" "}
+                    {sizes[item.pizza_sizes] || "Не указан"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <img
+                  className="cursor-pointer"
+                  src="/minus.svg"
+                  alt="Уменьшить"
+                  onClick={() => updateQuantity(item.drawer_id, -1)}
+                />
+                <span>{item.quantity}</span>
+                <img
+                  className="cursor-pointer"
+                  src="/plus.svg"
+                  alt="Увеличить"
+                  onClick={() => updateQuantity(item.drawer_id, 1)}
+                />
+              </div>
+              <div>
+                <span className="font-bold text-2xl">{item.price}тг</span>
+              </div>
+              <div>
+                <img
+                  className="cursor-pointer"
+                  src="/delete.svg"
+                  alt="Удалить"
+                  onClick={() => deleteCart(item.drawer_id)}
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <img className="cursor-pointer" src="/minus.svg" alt="Уменьшить" />
-            <span>2</span>
-            <img className="cursor-pointer" src="/plus.svg" alt="Увеличить" />
-          </div>
-          <div>
-            <span className="font-bold text-2xl">770тг</span>
-          </div>
-          <div>
-            <img className="cursor-pointer" src="/delete.svg" alt="Удалить" />
-          </div>
-        </div>
+          ))
+        ) : (
+          <p className="text-center">Корзина пуста</p>
+        )}
         <div className="flex items-center justify-between mt-10">
           <div>
             <p className="font-medium text-2xl">
-              Всего пицц: <span className="font-bold">3шт.</span>
+              Всего пицц:{" "}
+              <span className="font-bold">{cartItems.length} шт.</span>
             </p>
           </div>
           <div>
             <p className="font-medium text-2xl">
               Сумма заказа:{" "}
-              <span className="font-bold text-orange-500">900тг</span>
+              <span className="font-bold text-orange-500">
+                {cartItems.reduce(
+                  (total, item) => total + item.price * (item.quantity || 1),
+                  0
+                )}{" "}
+                тг
+              </span>
             </p>
           </div>
         </div>

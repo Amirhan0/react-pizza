@@ -1,18 +1,16 @@
 import { useState } from "react";
 
-export default function Sort() {
+export default function Sort({ sortType, setSortType }) {
   const [catOpen, clickCat] = useState(false);
-  const [type, clickSetType] = useState("популярности");
   return (
     <div
       onClick={() => (catOpen ? clickCat(false) : clickCat(true))}
       className="relative cursor-pointer"
     >
-      <label className="font-bold cursor-pointer" htmlFor="">
+      <label className="font-bold cursor-pointer">
         Сортировка по:
         <span className="text-orange-400 font-normal cursor-pointer">
-          {" "}
-          {type}
+          {sortType}
         </span>
       </label>
       <div
@@ -21,19 +19,19 @@ export default function Sort() {
         }`}
       >
         <p
-          onClick={() => clickSetType("популярности")}
+          onClick={() => setSortType("популярности")}
           className="cursor-pointer hover:text-orange-400"
         >
           популярности
         </p>
         <p
-          onClick={() => clickSetType("по цене")}
+          onClick={() => setSortType("по цене")}
           className="cursor-pointer hover:text-orange-400"
         >
           по цене
         </p>
         <p
-          onClick={() => clickSetType("по алфавиту")}
+          onClick={() => setSortType("по алфавиту")}
           className="cursor-pointer hover:text-orange-400"
         >
           по алфавиту

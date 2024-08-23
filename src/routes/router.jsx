@@ -1,20 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Drawer from "../components/Pages/Drawer";
-import PizzaList from "../components/PizzaList";
-import Category from "../components/Category";
-import Sort from "../components/Sort";
-function MainPage() {
-  return (
-    <div>
-      <div className="flex items-center justify-between mt-10">
-        <Category />
-        <Sort />
-      </div>
-      <PizzaList/>
-    </div>
-  );
-}
-
+import MainPage from "../components/Pages/Home";
 function AppRoutes() {
   return (
     <Routes>

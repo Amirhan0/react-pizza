@@ -2,24 +2,45 @@ import { useEffect, useState } from "react";
 import plusOrange from "/plusOrange.svg";
 import axios from "axios";
 import SkeletonLoader from "./Sceleton";
-export default function PizzaList() {
+export default function PizzaList({ sortType, categoryType }) {
   const [pizzas, setPizzas] = useState([]);
   const [doughType, setDoughType] = useState({});
   const [size, setSize] = useState({});
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/pizzas")
-      .then((response) => {
+    const fetchPizzas = async () => {
+      let sortQuery;
+      let categoryQuery = categoryType !== 0 ? `&category=${categoryType}` : "";
+      switch (sortType) {
+        case "популярности":
+          sortQuery = "rating";
+          break;
+        case "по цене":
+          sortQuery = "price";
+          break;
+        case "по алфавиту":
+          sortQuery = "name";
+          break;
+        default:
+          sortQuery = "rating";
+          break;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/pizzas?sortBy=${sortQuery}${categoryQuery}`
+        );
         setPizzas(response.data);
         setLoading(false);
         console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Ошибка при GET запросе");
-      });
-  }, []);
+      } catch (error) {
+        console.error("Ошибка при GET запросе:", error);
+        setLoading(false);
+      }
+    };
 
+    fetchPizzas();
+  }, [sortType,categoryType]);
   function onClickDough(pizzaId, index) {
     setDoughType((prev) => ({
       ...prev,
@@ -34,6 +55,26 @@ export default function PizzaList() {
     }));
   }
 
+  function addCartToDrawer(pizza) {
+    const pizzaData = {
+      id: pizza.id,
+      name: pizza.name,
+      imageUrl: pizza.imageUrl,
+      types: doughType[pizza.id] === undefined ? "" : doughType[pizza.id],
+      sizes: size[pizza.id] === undefined ? "" : size[pizza.id],
+      price: pizza.price,
+    };
+    console.log(pizzaData);
+    axios
+      .post("http://localhost:3001/drawer", pizzaData)
+      .then(() => {
+        alert("Пицца добавлена в корзину");
+      })
+      .catch((error) => {
+        console.log("Ошибка при добавление в корзину");
+      });
+  }
+
   return (
     <div className="mt-10">
       <div className="mb-10">
@@ -41,8 +82,7 @@ export default function PizzaList() {
       </div>
       <div className="grid grid-cols-4 gap-5">
         {loading
-          ?
-            Array.from({ length: 4 }).map((_, index) => (
+          ? Array.from({ length: 4 }).map((_, index) => (
               <SkeletonLoader key={index} />
             ))
           : pizzas.map((pizza) => (
@@ -94,7 +134,10 @@ export default function PizzaList() {
 
                 <div className="flex justify-around items-center w-full">
                   <span className="font-bold text-xl">от {pizza.price} тг</span>
-                  <div className="border cursor-pointer border-orange-500 rounded-full flex items-center py-2 px-4 gap-2 text-orange-500 font-bold">
+                  <div
+                    className="border cursor-pointer border-orange-500 rounded-full flex items-center py-2 px-4 gap-2 text-orange-500 font-bold"
+                    onClick={() => addCartToDrawer(pizza)}
+                  >
                     <img src={plusOrange} alt="" />
                     <span>Добавить</span>
                   </div>

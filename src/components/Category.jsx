@@ -1,6 +1,4 @@
-import { useState } from "react";
-
-export default function Category() {
+export default function Category({ categoryType, setCategoryType }) {
   const categoryes = [
     "Все",
     "Мясные",
@@ -9,10 +7,9 @@ export default function Category() {
     "Острые",
     "Закрытые",
   ];
-  const [active, setActive] = useState(0);
 
   function onClickCategory(index) {
-    setActive(index);
+    setCategoryType(index);
     console.log(index);
   }
   return (
@@ -22,7 +19,7 @@ export default function Category() {
           onClick={() => onClickCategory(index)}
           key={index}
           className={
-            index === active
+            index === categoryType
               ? "bg-black text-white px-7 py-3 rounded-full font-bold"
               : "bg-gray-100 text-black" +
                 "bg-gray-100 rounded-full text-center py-3 px-7 font-bold text-black hover:bg-black hover:text-white cursor-pointer"
