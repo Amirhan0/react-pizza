@@ -66,7 +66,7 @@ app.get("/drawer", (req, res) => {
 
 app.delete("/drawer/:id", (req, res) => {
   const drawer_id = req.params.id;
-  const query = ` DELETE FROM drawer WHERE id = ?`;
+  const query = ` DELETE FROM drawer WHERE drawer_id = ?`;
 
   db.query(query, [drawer_id], (err, result) => {
     if (err) {
