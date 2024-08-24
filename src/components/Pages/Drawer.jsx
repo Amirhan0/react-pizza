@@ -7,6 +7,19 @@ export default function Drawer() {
   const navigate = useNavigate();
   const dough = ["тонкое", "традиционное"];
   const sizes = ["26см", "30см", "40см"];
+
+  const deleteAllItems = () => {
+    axios
+      .delete("http://localhost:3001/drawer")
+      .then(() => {
+        setCartItems([]);
+        console.log("клик");
+      })
+      .catch((error) => {
+        console.log("Ошибка при очистке корзины");
+      });
+  };
+
   const deleteCart = (drawer_id) => {
     axios
       .delete(`http://localhost:3001/drawer/${drawer_id}`)
@@ -58,7 +71,10 @@ export default function Drawer() {
         </div>
         <div className="flex items-center gap-2">
           <img src="/trash.svg" alt="Очистить корзину" />
-          <span className="font-medium text-gray-500 cursor-pointer">
+          <span
+            className="font-medium text-gray-500 cursor-pointer"
+            onClick={deleteAllItems}
+          >
             Очистить корзину
           </span>
         </div>
@@ -109,7 +125,7 @@ export default function Drawer() {
             </div>
           ))
         ) : (
-          <p className="text-center">Корзина пуста</p>
+          <p className="text-center font-bold text-2xl">Корзина пуста</p>
         )}
         <div className="flex items-center justify-between mt-10">
           <div>

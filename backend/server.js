@@ -82,6 +82,19 @@ app.delete("/drawer/:id", (req, res) => {
   });
 });
 
+app.delete('/drawer', (req, res) => {
+  const query = ` DELETE FROM drawer`;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.log('Ошибка при удалении всех элементов');
+      res.status(500).send('Ошибка при удалении всех элементов');
+      return;
+    }
+    res.status(200).send('Все элементы успешно удалены');
+  });
+});
+
 app.listen(port, () => {
   console.log(`Сервер запущен на http://localhost:${port}/pizzas`);
 });
