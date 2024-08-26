@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import cart from "/cart.svg";
-export default function Header() {
+export default function Header({totalAmount}) {
   const navigate = useNavigate();
 
   const goToDrawer = () => {
@@ -26,7 +26,7 @@ export default function Header() {
         className="bg-orange-500 flex gap-3 items-center justify-center py-2 px-6 rounded-full text-white cursor-pointer"
         onClick={goToDrawer}
       >
-        <span>520тг</span>
+        <span>{totalAmount} тг.</span>
         <hr className="w-0.5 h-6 bg-orange-300 border-none rounded-xl" />
         <div>
           <img src={cart} alt="" />

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import plusOrange from "/plusOrange.svg";
 import axios from "axios";
 import SkeletonLoader from "./Sceleton";
-export default function PizzaList({ sortType, categoryType }) {
+export default function PizzaList({ sortType, categoryType, getMoney }) {
   const [pizzas, setPizzas] = useState([]);
   const [doughType, setDoughType] = useState({});
   const [size, setSize] = useState({});
@@ -40,7 +40,7 @@ export default function PizzaList({ sortType, categoryType }) {
     };
 
     fetchPizzas();
-  }, [sortType,categoryType]);
+  }, [sortType, categoryType]);
   function onClickDough(pizzaId, index) {
     setDoughType((prev) => ({
       ...prev,
@@ -69,6 +69,7 @@ export default function PizzaList({ sortType, categoryType }) {
       .post("http://localhost:3001/drawer", pizzaData)
       .then(() => {
         alert("Пицца добавлена в корзину");
+        getMoney()
       })
       .catch((error) => {
         console.log("Ошибка при добавление в корзину");

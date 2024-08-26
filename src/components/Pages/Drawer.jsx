@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Drawer() {
+export default function Drawer({getMoney}) {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
   const dough = ["тонкое", "традиционное"];
@@ -14,6 +14,7 @@ export default function Drawer() {
       .then(() => {
         setCartItems([]);
         console.log("клик");
+        getMoney()
       })
       .catch((error) => {
         console.log("Ошибка при очистке корзины");
